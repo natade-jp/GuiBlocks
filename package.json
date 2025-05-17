@@ -15,5 +15,21 @@
   "bugs": {
     "url": "https://github.com/natade-jp/GuiBlocks/issues"
   },
-  "homepage": "https://github.com/natade-jp/GuiBlocks#readme"
+  "homepage": "https://github.com/natade-jp/GuiBlocks#readme",
+  "devDependencies": {
+    "@rollup/plugin-commonjs": "^28.0.3",
+    "@rollup/plugin-node-resolve": "^16.0.1",
+    "@rollup/plugin-terser": "^0.4.4",
+    "docdash": "^2.0.2",
+    "eslint": "^9.27.0",
+    "eslint-config-prettier": "^10.1.5",
+    "jsdoc": "^4.0.4",
+    "jsdoc-export-default-interop": "^0.3.1",
+    "ntfile": "^1.0.0",
+    "prettier": "^3.5.3",
+    "rollup": "^4.40.2"
+  },
+  "dependencies": {
+    "ntcolor": "^2.0.4"
+  }
 }
