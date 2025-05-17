@@ -29,7 +29,7 @@ PC画面とスマホ画面の実動作を確認できます。
 		<meta charset="utf-8" />
 		<meta name="viewport" content="width=device-width,initial-scale=1.0,user-scalable=no" />
 		<script type="module" src="./main.mjs" charset="utf-8"></script>
-		<link rel="stylesheet" type="text/css" href="../../build/esm/main.css" />
+		<link rel="stylesheet" type="text/css" href="./esm/main.css" />
 	</head>
 	<body>
 		<div id="component_test"></div>
@@ -40,7 +40,7 @@ PC画面とスマホ画面の実動作を確認できます。
 - `main.mjs`
 
 ~~~ js
-import Blocks from "../../build/esm/index.min.js";
+import Blocks from "./esm/index.min.js";
 
 // メイン関数
 const main = function () {

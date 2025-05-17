@@ -24,3 +24,7 @@ const batch = function () {
 batch();
 
 NTFile.exec('npx jsdoc -R "./README.md" -c "./scripts/jsdoc.config.json"');
+
+NTFile.copy("./build/esm/index.min.js", "./docs/demo/esm/index.min.js");
+NTFile.copy("./build/esm/index.min.d.ts", "./docs/demo/esm/index.min.d.ts");
+NTFile.copy("./build/esm/main.css", "./docs/demo/esm/main.css");

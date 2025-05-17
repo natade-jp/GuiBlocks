@@ -1,4 +1,4 @@
-import Blocks from "../../build/esm/index.min.js";
+import Blocks from "./esm/index.min.js";
 
 // メイン関数
 const main = function () {
