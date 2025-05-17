@@ -9,11 +9,11 @@ PC画面とスマホ画面の実動作を確認できます。
 
 #### PC画面
 
-<iframe src="../docs/demo/" width="100%" height="1000" style="border: 1px solid #ccc; border-radius: 8px;"></iframe>
+<iframe src="./demo/" width="100%" height="1000" style="border: 1px solid #ccc; border-radius: 8px;"></iframe>
 
 #### スマホ画面
 
-<iframe src="../docs/demo/" width="390" height="844" style="border: 1px solid #ccc; border-radius: 8px;"></iframe>
+<iframe src="./demo/" width="390" height="844" style="border: 1px solid #ccc; border-radius: 8px;"></iframe>
 
 ### 解説
 
