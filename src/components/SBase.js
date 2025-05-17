@@ -1,0 +1,757 @@
+﻿﻿/**
+ * SBase.js
+ *
+ * @module GuiBlocks
+ * @author natade (https://github.com/natade-jp)
+ * @license MIT
+ */
+
+/**
+ * 全UIコンポーネントの基本機能を提供する基底クラス。
+ * HTML要素の生成、配置、表示/非表示、有効/無効化、スタイル操作などの基本的な機能を含む。
+ */
+export default class SBase {
+	/**
+	 * SBaseのインスタンスを生成します。
+	 * @param {string} elementtype 要素のタグ名
+	 * @param {string|string[]} [title] 初期テキスト
+	 */
+	constructor(elementtype, title) {
+		/**
+		 * 内部のエレメントのID
+		 * @type {string}
+		 */
+		this.id = "SComponent_" + (SBase._counter++).toString(16);
+
+		/**
+		 * エレメント同士を接続するエレメントのID
+		 * @type {string}
+		 */
+		this.wallid = "SComponent_" + (SBase._counter++).toString(16);
+
+		/**
+		 * 表示中かどうか
+		 * @type {boolean}
+		 */
+		this.isshow = false;
+
+		/**
+		 * 管理対象のエレメント
+		 * @type {HTMLElement}
+		 * @private
+		 */
+		this._element = null;
+
+		/**
+		 * 区切り用のエレメント
+		 * @type {HTMLElement}
+		 * @private
+		 */
+		this._wall = null;
+
+		/**
+		 * タグ名
+		 * @type {string}
+		 */
+		this.elementtype = elementtype;
+
+		/**
+		 * 大きさのを表す数値の型
+		 * @type {string}
+		 */
+		this.unit = SBase.UNIT_TYPE.EM;
+
+		this._initElement();
+
+		if (title) {
+			this.setText(title);
+		}
+	}
+
+	/**
+	 * 指定した要素にマウスイベント（タッチ・クリック）を登録します。
+	 * @param {HTMLElement} element イベントを追加する対象のHTML要素
+	 * @protected
+	 */
+	static _attachMouseEvent(element) {
+		const mouseevent = {
+			over: function () {
+				SBase._addClass(element, SBase.CLASS_NAME.MOUSEOVER);
+			},
+			out: function () {
+				SBase._removeClass(element, SBase.CLASS_NAME.MOUSEOVER);
+				SBase._removeClass(element, SBase.CLASS_NAME.MOUSEDOWN);
+			},
+			down: function () {
+				SBase._addClass(element, SBase.CLASS_NAME.MOUSEDOWN);
+			},
+			up: function () {
+				SBase._removeClass(element, SBase.CLASS_NAME.MOUSEDOWN);
+			}
+		};
+		element.addEventListener("touchstart", mouseevent.over, false);
+		element.addEventListener("touchend", mouseevent.up, false);
+		element.addEventListener("mouseover", mouseevent.over, false);
+		element.addEventListener("mouseout", mouseevent.out, false);
+		element.addEventListener("mousedown", mouseevent.down, false);
+		element.addEventListener("mouseup", mouseevent.up, false);
+	}
+
+	/**
+	 * 指定したIDの要素をDOMツリーから削除します。
+	 * @param {string} id 削除対象の要素のID
+	 * @returns {HTMLElement|null} 削除された要素、または存在しない場合はnull
+	 * @protected
+	 */
+	static _removeNodeForId(id) {
+		const element = document.getElementById(id);
+		SBase._removeNode(element);
+		return element;
+	}
+
+	/**
+	 * コンポーネントをターゲットに指定した方法で配置します。
+	 * @param {string|SBase} target 配置先のターゲット（IDまたはSBaseインスタンス）
+	 * @param {SBase} component 配置するコンポーネント
+	 * @param {number} type 配置タイプ（SBase.PUT_TYPE）
+	 * @throws {string} 不正な引数や配置先が見つからない場合に例外をスロー
+	 * @protected
+	 */
+	static _AputB(target, component, type) {
+		if (!target || !component || !(component instanceof SBase)) {
+			throw "IllegalArgumentException";
+		} else if (target === component) {
+			throw "it referenced me";
+		} else if (type !== SBase.PUT_TYPE.IN && type !== SBase.PUT_TYPE.RIGHT && type !== SBase.PUT_TYPE.NEWLINE) {
+			throw "IllegalArgumentException";
+		}
+		let node = null;
+		if (typeof target === "string") {
+			node = document.getElementById(target);
+		} else if (target instanceof SBase) {
+			if (type === SBase.PUT_TYPE.IN) {
+				if (target.isContainer()) {
+					node = target.getContainerElement();
+				} else {
+					throw "not Container";
+				}
+			} else {
+				node = target.element;
+			}
+		}
+		if (node === null) {
+			throw "Not Found " + target;
+		}
+		// この時点で
+		// node は HTML要素 となる。
+		// component は SBase となる。
+
+		/**
+		 * @param {HTMLElement} newNode
+		 * @param {HTMLElement} referenceNode
+		 */
+		const insertNext = function (newNode, referenceNode) {
+			if (referenceNode.nextSibling) {
+				referenceNode.parentNode.insertBefore(newNode, referenceNode.nextSibling);
+			} else {
+				referenceNode.parentNode.appendChild(newNode);
+			}
+		};
+
+		// 移動前に自分を消去
+		component.removeMe();
+
+		if (type === SBase.PUT_TYPE.IN) {
+			// 最後の行があるならば次の行へ
+			component.onAdded();
+			if (node.lastChild !== null) {
+				component.getWall(SBase.PUT_TYPE.NEWLINE).style.display = "block";
+				node.appendChild(component.getWall());
+			}
+			component.element.style.display = "inline-block";
+			node.appendChild(component.element);
+		} else {
+			if (node.parentNode === null) {
+				throw "not found element on the html";
+			}
+			component.onAdded();
+			insertNext(component.getWall(type), node);
+			insertNext(component.element, component.getWall(type));
+			if (type === SBase.PUT_TYPE.RIGHT) {
+				node.style.display = "inline-block";
+				component.getWall(type).style.display = "inline-block";
+				component.element.style.display = "inline-block";
+			} else if (type === SBase.PUT_TYPE.NEWLINE) {
+				node.style.display = "inline-block";
+				component.getWall(type).style.display = "block";
+				component.element.style.display = "inline-block";
+			}
+		}
+	}
+
+	/**
+	 * 指定した要素にブール属性を設定または削除します。
+	 * @param {HTMLElement} element 対象のHTML要素
+	 * @param {string} attribute 設定する属性名
+	 * @param {boolean} isset 属性を設定する場合はtrue、削除する場合はfalse
+	 * @throws {string} 不正な引数の場合に例外をスロー
+	 * @protected
+	 */
+	static _setBooleanAttribute(element, attribute, isset) {
+		if (typeof attribute !== "string" || typeof isset !== "boolean") {
+			throw "IllegalArgumentException";
+		}
+		const checked = element.getAttribute(attribute);
+		if (!isset && checked === null) {
+			// falseなので無効化させる。すでにチェック済みなら何もしなくてよい
+			element.setAttribute(attribute, attribute);
+		} else if (isset && checked !== null) {
+			element.removeAttribute(attribute);
+		}
+	}
+
+	/**
+	 * 指定した要素にブール属性が設定されているかを確認します。
+	 * @param {HTMLElement} element 対象のHTML要素
+	 * @param {string} attribute 確認する属性名
+	 * @returns {boolean} 属性が設定されている場合はtrue、設定されていない場合はfalse
+	 * @throws {string} 不正な引数の場合に例外をスロー
+	 * @protected
+	 */
+	static _isBooleanAttribute(element, attribute) {
+		if (typeof attribute !== "string") {
+			throw "IllegalArgumentException";
+		}
+		return element.getAttribute(attribute) === null;
+	}
+
+	/**
+	 * 指定した要素をDOMツリーから削除します。
+	 * @param {HTMLElement} element 削除対象のHTML要素
+	 * @returns {HTMLElement|null} 削除された要素、または存在しない場合はnull
+	 * @protected
+	 */
+	static _removeNode(element) {
+		if (element) {
+			if (element.parentNode) {
+				element.parentNode.removeChild(element);
+			}
+		}
+		return element;
+	}
+
+	/**
+	 * 指定した要素のすべての子要素を削除します。
+	 * @param {HTMLElement} element 対象のHTML要素
+	 * @protected
+	 */
+	static _removeChildNodes(element) {
+		let child = element.lastChild;
+		while (child) {
+			element.removeChild(child);
+			child = element.lastChild;
+		}
+		return;
+	}
+
+	/**
+	 * 指定した要素に特定のクラスが設定されているかを判定します。
+	 * @param {HTMLElement} element 対象のHTML要素
+	 * @param {string} classname 確認するクラス名
+	 * @returns {boolean} クラスが設定されている場合はtrue、設定されていない場合はfalse
+	 * @protected
+	 */
+	static _isSetClass(element, classname) {
+		const classdata = element.className;
+		if (classdata === null) {
+			return false;
+		}
+		const pattern = new RegExp("(^" + classname + "$)|( +" + classname + ")", "g");
+		return pattern.test(classdata);
+	}
+
+	/**
+	 * 指定した要素にクラスを追加します。
+	 * 既に追加されている場合は無視されます。
+	 * @param {HTMLElement} element 対象のHTML要素
+	 * @param {string} classname 追加するクラス名
+	 */
+	static _addClass(element, classname) {
+		const classdata = element.className;
+		if (classdata === null) {
+			element.className = classname;
+			return;
+		}
+		const pattern = new RegExp("(^" + classname + "$)|( +" + classname + ")", "g");
+		if (pattern.test(classdata)) {
+			return;
+		}
+		element.className = classdata + " " + classname;
+	}
+
+	/**
+	 * 指定した要素からクラスを削除します。
+	 * @param {HTMLElement} element 対象のHTML要素
+	 * @param {string} classname 削除するクラス名
+	 */
+	static _removeClass(element, classname) {
+		const classdata = element.className;
+		if (classdata === null) {
+			return;
+		}
+		const pattern = new RegExp("(^" + classname + "$)|( +" + classname + ")", "g");
+		if (!pattern.test(classdata)) {
+			return;
+		}
+		element.className = classdata.replace(pattern, "");
+	}
+
+	/**
+	 * 現在の横幅（数値）を取得します。
+	 * @returns {number|null} 横幅の数値。設定されていない場合はnull
+	 */
+	getWidth() {
+		let width = this.element.style.width;
+		if (width === null) {
+			return null;
+		}
+		width = width.match(/[+-]?\s*[0-9]*\.?[0-9]*/)[0];
+		return parseFloat(width);
+	}
+
+	/**
+	 * 現在の縦幅（数値）を取得します。
+	 * @returns {number|null} 縦幅の数値。設定されていない場合はnull
+	 */
+	getHeight() {
+		let height = this.element.style.height;
+		if (height === null) {
+			return null;
+		}
+		height = height.match(/[+-]?\s*[0-9]*\.?[0-9]*/)[0];
+		return parseFloat(height);
+	}
+
+	/**
+	 * サイズ
+	 * @typedef {Object} SSizeData
+	 * @property {number} width 横幅
+	 * @property {number} height 縦幅
+	 */
+
+	/**
+	 * 現在のサイズ（width/height）を取得します。
+	 * @returns {SSizeData} サイズ情報のオブジェクト
+	 */
+	getSize() {
+		return {
+			width: this.getWidth(),
+			height: this.getHeight()
+		};
+	}
+
+	/**
+	 * 横幅を設定します。
+	 * @param {number} width 横幅（数値）
+	 */
+	setWidth(width) {
+		if (typeof width !== "number") {
+			throw "IllegalArgumentException not number";
+		}
+		this.element.style.width = width.toString() + this.unit;
+	}
+
+	/**
+	 * 縦幅を設定します。
+	 * @param {number} height 縦幅（数値）
+	 */
+	setHeight(height) {
+		if (typeof height !== "number") {
+			throw "IllegalArgumentException not number";
+		}
+		this.element.style.height = height.toString() + this.unit;
+	}
+
+	/**
+	 * 横幅・縦幅をまとめて設定します。
+	 * @param {number} width 横幅
+	 * @param {number} height 縦幅
+	 */
+	setSize(width, height) {
+		this.setWidth(width);
+		this.setHeight(height);
+	}
+	/**
+	 * 自身のエレメントと区切りエレメントをDOMツリーから削除します。
+	 */
+	removeMe() {
+		SBase._removeNodeForId(this.id);
+		SBase._removeNodeForId(this.wallid);
+	}
+
+	/**
+	 * 要素がDOMに追加された際に呼ばれるコールバックです。（デフォルトでは何もしません）
+	 */
+	onAdded() {}
+
+	/**
+	 * 区切り用のエレメントを取得します。
+	 * @param {number} [type=SBase.PUT_TYPE.IN] 区切りのタイプ
+	 * @returns {HTMLElement} 区切り用のHTML要素
+	 */
+	getWall(type) {
+		// すでに作成済みならそれを返して、作っていないければ作る
+		if (this._wall) {
+			return this._wall;
+		}
+		const wall = document.createElement("span");
+		wall.id = this.wallid;
+		if (type === SBase.PUT_TYPE.RIGHT) {
+			wall.className = SBase.CLASS_NAME.SPACE;
+		} else if (type === SBase.PUT_TYPE.NEWLINE) {
+			wall.className = SBase.CLASS_NAME.NEWLINE;
+		}
+		wall.style.display = "inline-block";
+		this._wall = wall;
+		return wall;
+	}
+
+	/**
+	 * この要素がコンテナ要素かどうかを判定します。
+	 * @returns {boolean} コンテナ要素の場合はtrue、それ以外はfalse
+	 */
+	isContainer() {
+		return this.getContainerElement() !== null;
+	}
+
+	/**
+	 * コンテナ要素（子要素を格納できるエレメント）を取得します。
+	 * @returns {HTMLElement|null} コンテナ要素。存在しない場合はnull
+	 */
+	getContainerElement() {
+		return null;
+	}
+
+	/**
+	 * 内部のエレメントを初期化します。
+	 * @private
+	 */
+	_initElement() {
+		if (this._element) {
+			return;
+		}
+
+		/**
+		 * @type {HTMLElement}
+		 */
+		const new_element = document.createElement(this.elementtype);
+		new_element.id = this.id;
+		new_element.className = SBase.CLASS_NAME.COMPONENT;
+		new_element.style.display = "inline-block";
+		this._element = new_element;
+		SBase._attachMouseEvent(new_element);
+	}
+
+	/**
+	 * 管理しているHTMLエレメントを取得します。
+	 * @returns {HTMLElement|HTMLInputElement}
+	 */
+	get element() {
+		return this._element;
+	}
+
+	/**
+	 * 指定したターゲットに自身を指定タイプで配置します。
+	 * @param {SBase} targetComponent 配置先
+	 * @param {number} type SBase.PUT_TYPE
+	 */
+	put(targetComponent, type) {
+		SBase._AputB(this, targetComponent, type);
+		return;
+	}
+
+	/**
+	 * 指定したターゲット（IDまたはSBase）に自身を指定タイプで配置します。
+	 * @param {SBase|string} target 配置先
+	 * @param {number} type 配置タイプ
+	 */
+	putMe(target, type) {
+		SBase._AputB(target, this, type);
+		return;
+	}
+
+	/**
+	 * 要素が可視状態かどうかを判定します。
+	 * @returns {boolean} 可視の場合はtrue
+	 */
+	isVisible() {
+		if (this.element.style.visibility === null) {
+			return true;
+		}
+		return this.element.style.visibility !== "hidden";
+	}
+
+	/**
+	 * 要素の可視状態を設定します。
+	 * @param {boolean} isvisible trueで表示、falseで非表示
+	 */
+	setVisible(isvisible) {
+		if (isvisible) {
+			this.element.style.visibility = "visible";
+			this.getWall().style.visibility = "visible";
+		} else {
+			this.element.style.visibility = "hidden";
+			this.getWall().style.visibility = "hidden";
+		}
+		return;
+	}
+
+	/**
+	 * テキストノードを取得します。
+	 * @returns {Node|null} テキストノード。なければnull
+	 */
+	getTextNode() {
+		const element = this.element;
+		// childNodes でテキストノードまで取得する
+		const childnodes = element.childNodes;
+		let textnode = null;
+		let i = 0;
+		for (i = 0; i < childnodes.length; i++) {
+			if (childnodes[i] instanceof Text) {
+				textnode = childnodes[i];
+				break;
+			}
+		}
+		// テキストノードがない場合は null をかえす
+		return textnode;
+	}
+
+	/**
+	 * テキストノード以外の要素ノードを取得します。
+	 * @returns {Node|null} 最初の要素ノード。なければnull
+	 */
+	getElementNode() {
+		const element = this.element;
+		// children でテキストノード以外を取得する
+		const childnodes = element.children;
+		let node = null;
+		let i = 0;
+		for (i = 0; i < childnodes.length; i++) {
+			if (!(childnodes[i] instanceof Text)) {
+				node = childnodes[i];
+				break;
+			}
+		}
+		return node;
+	}
+
+	/**
+	 * Value属性を持つ編集可能なノードを取得します。
+	 * （デフォルトではnull。継承先でオーバーライド）
+	 * @returns {HTMLInputElement|null} 編集可能ノード。なければnull
+	 */
+	getEditableNodeForValue() {
+		// Value要素をもつもの
+		return null;
+	}
+
+	/**
+	 * nodeValueを持つ編集可能なノードを取得します。
+	 * @returns {Node|null} 編集可能ノード。なければnull
+	 */
+	getEditableNodeForNodeValue() {
+		// Value要素をもつなら、このメソッドは利用不可とする
+		if (this.getEditableNodeForValue() !== null) {
+			return null;
+		}
+		// nodeValue 要素をもつもの
+		let textnode = this.getTextNode();
+		// 見つからなかったら作成する
+		if (textnode === null) {
+			const element = this.element;
+			textnode = document.createTextNode("");
+			element.appendChild(textnode);
+		}
+		return textnode;
+	}
+
+	/**
+	 * 内部のテキストを設定します。
+	 * @param {string|string[]} title 設定するテキスト
+	 */
+	setText(title) {
+		if (!title) {
+			return;
+		}
+		let title_array = title instanceof Array ? title : [title];
+		let node = null;
+		node = this.getEditableNodeForValue();
+		if (node) {
+			node.value = title_array[0];
+			return;
+		}
+		node = this.getEditableNodeForNodeValue();
+		if (node) {
+			node.nodeValue = title_array[0];
+			return;
+		}
+	}
+
+	/**
+	 * 内部のテキストを取得します。
+	 * @returns {string|string[]} テキスト
+	 */
+	getText() {
+		let title = null;
+		let node = null;
+		node = this.getEditableNodeForValue();
+		if (node) {
+			title = node.value;
+		}
+		node = this.getEditableNodeForNodeValue();
+		if (node) {
+			title = node.nodeValue.trim();
+		}
+		return title === null ? "" : title;
+	}
+
+	/**
+	 * 有効状態を管理するHTML要素を取得します。
+	 * @returns {HTMLElement|null} 有効状態を管理するHTML要素、またはnull
+	 */
+	getEnabledElement() {
+		return null;
+	}
+
+	/**
+	 * 要素の有効/無効状態を設定します。
+	 * @param {boolean} isenabled trueで有効、falseで無効
+	 */
+	setEnabled(isenabled) {
+		if (isenabled) {
+			SBase._removeClass(this.element, SBase.CLASS_NAME.DISABLED);
+		} else {
+			SBase._addClass(this.element, SBase.CLASS_NAME.DISABLED);
+		}
+		const element = this.getEnabledElement();
+		// disabled属性が利用可能ならつける
+		if (element !== null) {
+			SBase._setBooleanAttribute(element, "disabled", isenabled);
+		}
+	}
+
+	/**
+	 * 要素が有効かどうかを判定します。
+	 * @returns {boolean} 有効な場合はtrue、無効な場合はfalse
+	 */
+	isEnabled() {
+		return !SBase._isSetClass(this.element, SBase.CLASS_NAME.DISABLED);
+	}
+
+	/**
+	 * 内部エレメントのIDを取得します。
+	 * @returns {string} ID文字列
+	 */
+	getId() {
+		return this.id;
+	}
+
+	/**
+	 * ユニットの型（px/em/%など）を取得します。
+	 * @returns {string} ユニット型
+	 */
+	getUnit() {
+		return this.unit;
+	}
+
+	/**
+	 * ユニットの型を設定します。
+	 * @param {string} UNIT_TYPE 設定するユニット型
+	 */
+	setUnit(UNIT_TYPE) {
+		this.unit = UNIT_TYPE;
+	}
+
+	/**
+	 * 要素に指定したクラスを追加します。
+	 * @param {string} classname 追加するクラス名
+	 */
+	addClass(classname) {
+		return SBase._addClass(this.element, classname);
+	}
+
+	/**
+	 * オブジェクトを文字列として返します。
+	 * @returns {string} 例: "div(SComponent_1)"
+	 */
+	toString() {
+		return this.elementtype + "(" + this.id + ")";
+	}
+}
+
+/**
+ * 配置方法の定数
+ * @enum {number}
+ */
+SBase.PUT_TYPE = {
+	IN: 0,
+	RIGHT: 1,
+	NEWLINE: 2
+};
+
+/**
+ * 単位の種類
+ * @enum {string}
+ */
+SBase.UNIT_TYPE = {
+	PX: "px",
+	EM: "em",
+	PERCENT: "%"
+};
+
+/**
+ * ラベルの位置指定
+ * @enum {number}
+ */
+SBase.LABEL_POSITION = {
+	LEFT: 0,
+	RIGHT: 1
+};
+
+/**
+ * クラス名の定数群（CSSと連携）
+ * @enum {string}
+ */
+SBase.CLASS_NAME = {
+	MOUSEOVER: "SCOMPONENT_MouseOver",
+	MOUSEDOWN: "SCOMPONENT_MouseDown",
+	DISABLED: "SCOMPONENT_Disabled",
+	COMPONENT: "SCOMPONENT_Component",
+	NEWLINE: "SCOMPONENT_Newline",
+	CLOSE: "SCOMPONENT_Close",
+	OPEN: "SCOMPONENT_Open",
+	SPACE: "SCOMPONENT_Space",
+	CONTENTSBOX: "SCOMPONENT_ContentsBox",
+	PANEL: "SCOMPONENT_Panel",
+	PANEL_LEGEND: "SCOMPONENT_PanelLegend",
+	SLIDEPANEL: "SCOMPONENT_SlidePanel",
+	SLIDEPANEL_LEGEND: "SCOMPONENT_SlidePanelLegend",
+	SLIDEPANEL_SLIDE: "SCOMPONENT_SlidePanelSlide",
+	GROUPBOX: "SCOMPONENT_GroupBox",
+	GROUPBOX_LEGEND: "SCOMPONENT_GroupBoxLegend",
+	IMAGEPANEL: "SCOMPONENT_ImagePanel",
+	LABEL: "SCOMPONENT_Label",
+	SELECT: "SCOMPONENT_Select",
+	COMBOBOX: "SCOMPONENT_ComboBox",
+	CHECKBOX: "SCOMPONENT_CheckBox",
+	CHECKBOX_IMAGE: "SCOMPONENT_CheckBoxImage",
+	BUTTON: "SCOMPONENT_Button",
+	FILELOAD: "SCOMPONENT_FileLoad",
+	FILESAVE: "SCOMPONENT_FileSave",
+	CANVAS: "SCOMPONENT_Canvas",
+	PROGRESSBAR: "SCOMPONENT_ProgressBar",
+	SLIDER: "SCOMPONENT_Slider",
+	COLORPICKER: "SCOMPONENT_ColorPicker"
+};
+
+SBase._counter = 0;

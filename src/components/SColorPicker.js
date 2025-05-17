@@ -1,0 +1,408 @@
+﻿/**
+ * SColorPicker.js
+ *
+ * @module GuiBlocks
+ * @author natade (https://github.com/natade-jp)
+ * @license MIT
+ */
+
+import NTColor from "ntcolor";
+import SBase from "./SBase.js";
+
+/**
+ * @typedef {Object} SColorPickerDataElement
+ * @property {HTMLDivElement} div - 各カラー要素の外枠
+ * @property {number} split - 分割数（グラデーション用）
+ * @property {number} value - 現在の値（0.0〜1.0）
+ * @property {HTMLInputElement} input - 数値入力用のテキストボックス
+ * @property {HTMLDivElement} gauge - ゲージ表示部分
+ * @property {string[]} color_data - グラデーションカラー配列
+ * @property {HTMLDivElement[]} color_node - カラーノードの配列
+ * @property {boolean} is_press - 押下状態
+ */
+
+/**
+ * @typedef {Object} SColorPickerData
+ * @property {SColorPickerDataElement} H
+ * @property {SColorPickerDataElement} S
+ * @property {SColorPickerDataElement} L
+ */
+
+/**
+ * HSLカラー形式に基づくカラーピッカーコンポーネント。
+ * ユーザーは色相、彩度、輝度を個別に調整できます。
+ */
+export default class SColorPicker extends SBase {
+	constructor() {
+		super("div");
+		this.addClass(SBase.CLASS_NAME.COLORPICKER);
+
+		const element = this.element;
+		const that = this;
+
+		/**
+		 * HSLデータを管理するオブジェクト
+		 * @type {SColorPickerData}
+		 */
+		const hls = {
+			H: {
+				div: document.createElement("div"),
+				split: 6,
+				value: 0.0,
+				input: null,
+				gauge: null,
+				color_data: [],
+				color_node: [],
+				is_press: false
+			},
+			S: {
+				div: document.createElement("div"),
+				split: 1,
+				value: 0.5,
+				input: null,
+				gauge: null,
+				color_data: [],
+				color_node: [],
+				is_press: false
+			},
+			L: {
+				div: document.createElement("div"),
+				split: 2,
+				value: 0.5,
+				input: null,
+				gauge: null,
+				color_data: [],
+				color_node: [],
+				is_press: false
+			}
+		};
+
+		for (let i = 0; i <= hls.H.split; i++) {
+			const x = (1.0 / hls.H.split) * i;
+			hls.H.color_data.push(NTColor.newColorNormalizedHSL([x, 1.0, 0.5]).toCSSHex());
+		}
+
+		// イベントをどこで発生させたか分かるように、
+		// 関数を戻り値としてもどし、戻り値として戻した関数を
+		// イベント発生時に呼び出すようにしています。
+
+		/**
+		 * 押したときにマウスの位置を取得して更新する
+		 * @param {string} name
+		 * @returns {EventListenerOrEventListenerObject}
+		 */
+		const pushevent = function (name) {
+			if (name !== "H" && name !== "L" && name !== "S") {
+				return;
+			}
+
+			/**
+			 * @param {MouseEvent} event
+			 * @type {EventListenerOrEventListenerObject}
+			 */
+			const func = function (event) {
+				if (Array.isArray(event)) event = event[0];
+				if (hls[name].is_press) {
+					const node = event.target;
+					const element =
+						node instanceof HTMLElement
+							? node
+							: event.currentTarget instanceof HTMLElement
+							? event.currentTarget
+							: null;
+					if (!element) return;
+					if (name === "H" || name === "L" || name === "S") {
+						hls[name].value = event.offsetX / element.clientWidth;
+					}
+					that.redraw();
+				}
+			};
+			return func;
+		};
+
+		/**
+		 * 押した・離したの管理
+		 * @param {string} name
+		 * @param {boolean} is_press
+		 * @returns {EventListenerOrEventListenerObject}
+		 */
+		const pressevent = function (name, is_press) {
+			if (name !== "H" && name !== "L" && name !== "S") {
+				return;
+			}
+			/**
+			 * @type {EventListenerOrEventListenerObject}
+			 */
+			const func = function (event) {
+				if (Array.isArray(event)) event = event[0];
+				hls[name].is_press = is_press;
+				if (is_press) {
+					const myfunc = pushevent(name);
+					if (typeof myfunc === "function") {
+						myfunc(event);
+					}
+				}
+			};
+			return func;
+		};
+
+		/**
+		 *インプットボックスの変更
+		 * @param {string} name
+		 * @returns {EventListenerOrEventListenerObject}
+		 */
+		const inputevent = function (name) {
+			if (name !== "H" && name !== "L" && name !== "S") {
+				return;
+			}
+			/**
+			 * @type {EventListenerOrEventListenerObject}
+			 */
+			const func = function (event) {
+				if (Array.isArray(event)) event = event[0];
+				// イベントが発生したノードの取得
+				let node = event.target;
+				/**
+				 * @type {HTMLInputElement}
+				 */
+				const inputbox =
+					node instanceof HTMLInputElement
+						? node
+						: event.currentTarget instanceof HTMLInputElement
+						? event.currentTarget
+						: null;
+				if (!inputbox) return;
+				hls[name].value = parseFloat(inputbox.value) / 100.0;
+				that.redraw();
+			};
+			return func;
+		};
+
+		/**
+		 * 内部のカラーバーを作成
+		 * @param {HTMLDivElement} target
+		 * @param {string} name
+		 */
+		const createSelectBar = function (target, name) {
+			if (name !== "H" && name !== "L" && name !== "S") {
+				return;
+			}
+
+			const element_cover = document.createElement("div"); // クリック検出
+			const element_gauge = document.createElement("div"); // ゲージ表示用
+			const element_gradient = document.createElement("div"); // グラデーション作成用
+
+			// レイヤーの初期設定
+			target.style.position = "relative";
+			element_cover.style.position = "absolute";
+			element_gauge.style.position = "absolute";
+			element_gradient.style.position = "absolute";
+			element_cover.style.margin = "0px";
+			element_cover.style.padding = "0px";
+			element_gauge.style.margin = "0px";
+			element_gauge.style.padding = "0px";
+			element_gradient.style.margin = "0px";
+			element_gradient.style.padding = "0px";
+
+			// 上にかぶせるカバー
+			element_cover.addEventListener("mousedown", pressevent(name, true), false);
+			element_cover.addEventListener("mouseup", pressevent(name, false), false);
+			element_cover.addEventListener("mouseout", pressevent(name, false), false);
+			element_cover.addEventListener("mousemove", pushevent(name), false);
+			element_cover.addEventListener("touchstart", pressevent(name, true), false);
+			element_cover.addEventListener("touchend", pressevent(name, false), false);
+			element_cover.addEventListener("touchcancel", pressevent(name, false), false);
+			element_cover.dataset.name = name;
+			element_cover.style.width = "100%";
+			element_cover.style.height = "100%";
+			element_cover.style.bottom = "0px";
+
+			// ゲージ（横幅で｜を表す）
+			element_gauge.style.width = "33%";
+			element_gauge.style.height = "100%";
+			element_gauge.style.bottom = "0px";
+			element_gauge.style.borderStyle = "ridge";
+			element_gauge.style.borderWidth = "0px 2px 0px 0px";
+			hls[name].gauge = element_gauge;
+
+			// グラデーション部分
+			const split = hls[name].split;
+			element_gradient.style.width = "100%";
+			element_gradient.style.height = "100%";
+			element_gradient.style.overflow = "hidden";
+			for (let i = 0; i < split; i++) {
+				const element_color = document.createElement("div");
+				element_color.style.display = "inline-block";
+				element_color.style.margin = "0px";
+				element_color.style.padding = "0px";
+				element_color.style.height = "100%";
+				element_color.style.width = 100.0 / split + "%";
+				element_color.style.background = "linear-gradient(to right, #000, #FFF)";
+				hls[name].color_node.push(element_color);
+				element_gradient.appendChild(element_color);
+			}
+
+			// 3つのレイヤーを結合
+			target.appendChild(element_gradient);
+			target.appendChild(element_gauge);
+			target.appendChild(element_cover);
+		};
+
+		/**
+		 * 1行を作成
+		 * @param {string} name
+		 */
+		const createColorBar = function (name) {
+			if (name !== "H" && name !== "L" && name !== "S") {
+				return;
+			}
+
+			const element_text = document.createElement("span");
+			const element_colorbar = document.createElement("div");
+			const element_inputbox = document.createElement("input");
+
+			// 位置の基本設定
+			element_text.style.display = "inline-block";
+			element_colorbar.style.display = "inline-block";
+			element_inputbox.style.display = "inline-block";
+			element_text.style.verticalAlign = "top";
+			element_colorbar.style.verticalAlign = "top";
+			element_inputbox.style.verticalAlign = "top";
+			element_text.style.height = "100%";
+			element_colorbar.style.height = "100%";
+			element_inputbox.style.height = "100%";
+
+			// 文字
+			element_text.style.margin = "0px";
+			element_text.style.padding = "0px";
+			element_text.style.textAlign = "center";
+
+			// 中央のバー
+			element_colorbar.style.margin = "0px 0.5em 0px 0.5em";
+			element_colorbar.style.padding = "0px";
+			element_colorbar.style.borderStyle = "solid";
+			element_colorbar.style.borderWidth = "1px";
+
+			// 入力ボックス
+			element_inputbox.addEventListener("input", inputevent(name), false);
+			element_inputbox.type = "number";
+			element_inputbox.style.margin = "0px";
+			element_inputbox.style.padding = "0px";
+			element_inputbox.style.borderStyle = "none";
+			element_inputbox.min = "0.0";
+			element_inputbox.max = "100.0";
+			element_inputbox.step = "1.0";
+			hls[name].input = element_inputbox;
+
+			// 横幅調整
+			element_text.style.width = "1.5em";
+			element_colorbar.style.width = "calc(100% - 6.0em)";
+			element_inputbox.style.width = "3.5em";
+
+			// バーの内部を作成
+			createSelectBar(element_colorbar, name);
+
+			// バーのサイズ調整
+			const target = hls[name].div;
+			target.style.height = "1.2em";
+			target.style.margin = "0.5em 0px 0.5em 0px";
+
+			element_text.appendChild(document.createTextNode(name));
+			target.appendChild(element_text);
+			target.appendChild(element_colorbar);
+			target.appendChild(element_inputbox);
+		};
+
+		// HSLの3つを作成する
+		for (const key in hls) {
+			createColorBar(key);
+		}
+
+		this.hls = hls;
+
+		/**
+		 * カラー変更時のリスナー関数群
+		 * @type {Function[]}
+		 */
+		this.listener = [];
+
+		// Elementを更新後にくっつける
+		this.redraw();
+		element.appendChild(this.hls.H.div);
+		element.appendChild(this.hls.S.div);
+		element.appendChild(this.hls.L.div);
+	}
+
+	/**
+	 * カラーを設定します。
+	 * @param {NTColor} color - 設定する色（NTColor型）
+	 * @throws {string} 型が不正な場合に例外をスロー
+	 */
+	setColor(color) {
+		if (!(color instanceof NTColor)) {
+			throw "ArithmeticException";
+		}
+		const hls = this.hls;
+		const c = color.toNormalizedHSL();
+		hls.H.value = c.h;
+		hls.S.value = c.s;
+		hls.L.value = c.l;
+		this.redraw();
+	}
+
+	/**
+	 * 現在設定されている色を取得します。
+	 * @returns {NTColor} 現在の色（NTColor型）
+	 */
+	getColor() {
+		const hls = this.hls;
+		const h = hls.H.value;
+		const s = hls.S.value;
+		const l = hls.L.value;
+		return NTColor.newColorNormalizedHSL([h, s, l]);
+	}
+
+	/**
+	 * カラーピッカーを再描画します。
+	 */
+	redraw() {
+		const hls = this.hls;
+		const h = hls.H.value;
+		const s = hls.S.value;
+		const l = hls.L.value;
+		hls.S.color_data = [
+			NTColor.newColorNormalizedHSL([h, 0.0, l]).toCSSHex(),
+			NTColor.newColorNormalizedHSL([h, 1.0, l]).toCSSHex()
+		];
+		hls.L.color_data = [
+			NTColor.newColorNormalizedHSL([h, s, 0.0]).toCSSHex(),
+			NTColor.newColorNormalizedHSL([h, s, 0.5]).toCSSHex(),
+			NTColor.newColorNormalizedHSL([h, s, 1.0]).toCSSHex()
+		];
+		for (const key in hls) {
+			if (key !== "H" && key !== "L" && key !== "S") {
+				return;
+			}
+
+			const data = hls[key].color_data;
+			const node = hls[key].color_node;
+			for (let i = 0; i < node.length; i++) {
+				node[i].style.background = "linear-gradient(to right, " + data[i] + ", " + data[i + 1] + ")";
+			}
+			const value = Math.round(100.0 * hls[key].value);
+			hls[key].gauge.style.width = value + "%";
+			hls[key].input.value = value.toString();
+		}
+		for (let i = 0; i < this.listener.length; i++) {
+			this.listener[i]();
+		}
+	}
+
+	/**
+	 * 値が変化した際に呼び出すリスナーを登録します。
+	 * @param {Function} func - 変更時に実行する関数
+	 */
+	addListener(func) {
+		this.listener.push(func);
+	}
+}

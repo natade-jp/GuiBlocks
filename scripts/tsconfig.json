@@ -1,0 +1,21 @@
+{
+	"buildOnSave": false, // 保存時にビルドしない
+	"compileOnSave": false, // 保存時にコンパイルしない
+	// コンパイルオプション
+	"compilerOptions": {
+		"allowJs": true, // JavaScript ファイルをコンパイル対象にする
+		"checkJs": true, // JavaScript ファイルの型整合性などをチェック
+		"declaration": true, // 型定義ファイルを出力する
+		"emitDeclarationOnly": true, // 型定義ファイルのみを出力する
+		"module": "es2015", // モジュールの方式
+		"target": "es2015", // 出力する ECMAScript のバージョン
+		"moduleResolution": "node", // モジュール解決の方式
+		"noImplicitAny": true, // 暗黙的な any をエラーにする
+		"lib": ["es2015", "dom"], // コンパイルに含めるライブラリの指定
+		"newLine": "LF", // 生成コードの改行コードを指定する
+		"ignoreDeprecations": "5.0",
+		"sourceMap": true, // ソースマップを出力する
+		"outDir": "../build/type/" // 出力先ディレクトリ
+	},
+	"include": ["../build/esm/index.js"] // コンパイル対象のファイル
+}

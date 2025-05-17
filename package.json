@@ -2,16 +2,48 @@
 	"name": "guiblocks",
 	"version": "0.0.1",
 	"description": "A lightweight JavaScript UI component library for building web interfaces with modular blocks.",
-	"main": "index.js",
-	"scripts": {
-		"test": "echo \"Error: no test specified\" && exit 1"
-	},
+	"keywords": [
+		"gui",
+		"ui",
+		"components",
+		"javascript",
+		"web",
+		"widgets",
+		"modular",
+		"framework",
+		"guiblocks",
+		"interface",
+		"library"
+	],
+	"author": "natade-jp <natade3@gmail.com> (https://github.com/natade-jp)",
 	"repository": {
 		"type": "git",
 		"url": "git+https://github.com/natade-jp/GuiBlocks.git"
 	},
-	"author": "",
 	"license": "MIT",
+	"source": "./src/index.js",
+	"main": "./build/esm/index.js",
+	"types": "./build/dts/index.d.ts",
+	"exports": {
+		".": {
+			"browser": "./build/umd/index.js",
+			"umd": "./build/umd/index.js",
+			"import": "./build/esm/index.js",
+			"require": "./build/cjs/index.js"
+		}
+	},
+	"type": "module",
+	"scripts": {
+		"build": "node ./scripts/package.build.js",
+		"test": "jest",
+		"test_target": "node ./scripts/package.test.js",
+		"doc": "node ./scripts/package.doc.js",
+		"type": "node ./scripts/package.type.js"
+	},
+	"directories": {
+		"src": "./src",
+		"build": "./build"
+	},
 	"bugs": {
 		"url": "https://github.com/natade-jp/GuiBlocks/issues"
 	},
@@ -27,7 +59,8 @@
 		"jsdoc-export-default-interop": "^0.3.1",
 		"ntfile": "^1.0.0",
 		"prettier": "^3.5.3",
-		"rollup": "^4.40.2"
+		"rollup": "^4.40.2",
+		"typescript": "^5.8.3"
 	},
 	"dependencies": {
 		"ntcolor": "^2.0.4"
