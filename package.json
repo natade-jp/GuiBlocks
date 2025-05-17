@@ -23,7 +23,7 @@
 	"license": "MIT",
 	"source": "./src/index.js",
 	"main": "./build/esm/index.js",
-	"types": "./build/dts/index.d.ts",
+	"types": "./build/type/index.d.ts",
 	"exports": {
 		".": {
 			"browser": "./build/umd/index.js",
