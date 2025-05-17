@@ -6,6 +6,7 @@
 /html/
 /docs/
 /scripts/
+/tutorials/
 /.vscode/
 jest.config.js
 .prettierignore
