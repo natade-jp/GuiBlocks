@@ -1,0 +1,341 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    
+    <meta charset="utf-8">
+    <title>components/SCanvas.js - GuiBlocks</title>
+    
+    
+    <script src="scripts/prettify/prettify.js"></script>
+    <script src="scripts/prettify/lang-css.js"></script>
+    <!--[if lt IE 9]>
+      <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
+    <link type="text/css" rel="stylesheet" href="styles/prettify.css">
+    <link type="text/css" rel="stylesheet" href="styles/jsdoc.css">
+    <script src="scripts/nav.js" defer></script>
+    
+    <script src="scripts/commonNav.js" defer></script>
+    
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+</head>
+<body>
+
+<input type="checkbox" id="nav-trigger" class="nav-trigger" />
+<label for="nav-trigger" class="navicon-button x">
+  <div class="navicon"></div>
+</label>
+
+<label for="nav-trigger" class="overlay"></label>
+
+<nav >
+    
+    
+</nav>
+
+<div id="main">
+    
+    <h1 class="page-title">components/SCanvas.js</h1>
+    
+
+    
+
+
+
+    
+    <section>
+        <article>
+            <pre class="prettyprint source linenums"><code>﻿/**
+ * SCanvas.js
+ *
+ * @module GuiBlocks
+ * @author natade (https://github.com/natade-jp)
+ * @license MIT
+ */
+
+import SBase from "./SBase.js";
+
+/**
+ * キャンバス描画用のコンポーネントクラス。
+ * キャンバス上に画像の描画や取得、クリアなどの操作が可能です。
+ */
+export default class SCanvas extends SBase {
+	constructor() {
+		super("canvas");
+		this.addClass(SBase.CLASS_NAME.CANVAS);
+
+		/**
+		 * @type {HTMLCanvasElement}
+		 */
+		// @ts-ignore
+		this.canvas = this.element;
+
+		this.setPixelSize(300, 150); // canvas のデフォルト値を設定する
+	}
+
+	/**
+	 * ピクセルサイズのオブジェクト
+	 * @typedef {Object} SPixelSizeData
+	 * @property {number} width 横幅
+	 * @property {number} height 縦幅
+	 */
+
+	/**
+	 * キャンバスのサイズを取得します。
+	 * @returns {SPixelSizeData}
+	 */
+	getPixelSize() {
+		return {
+			width: this.canvas.width,
+			height: this.canvas.height
+		};
+	}
+
+	/**
+	 * キャンバス要素を取得します。
+	 * @returns {HTMLCanvasElement} キャンバス要素
+	 */
+	getCanvas() {
+		return this.canvas;
+	}
+
+	/**
+	 * キャンバスのピクセルサイズを設定します。
+	 * @param {number} width - 幅（ピクセル）
+	 * @param {number} height - 高さ（ピクセル）
+	 * @throws {string} 引数が不正な場合に例外をスローします
+	 */
+	setPixelSize(width, height) {
+		if (
+			arguments.length !== 2 ||
+			typeof width !== "number" ||
+			typeof height !== "number" ||
+			width &lt; 0 ||
+			height &lt; 0
+		) {
+			throw "IllegalArgumentException";
+		}
+		width = ~~Math.floor(width);
+		height = ~~Math.floor(height);
+		this.canvas.width = width;
+		this.canvas.height = height;
+	}
+
+	/**
+	 * 2D描画用コンテキストを取得します。
+	 * @returns {CanvasRenderingContext2D} コンテキストオブジェクト
+	 */
+	getContext() {
+		if (this.context === undefined) {
+			this.context = this.canvas.getContext("2d");
+		}
+		return this.context;
+	}
+
+	/**
+	 * キャンバスをクリアします。
+	 */
+	clear() {
+		this.getContext().clearRect(0, 0, this.canvas.width, this.canvas.height);
+	}
+
+	/**
+	 * 現在のキャンバス画像をImageDataとして取得します。
+	 * @returns {ImageData} 画像データ
+	 */
+	getImageData() {
+		return this.getContext().getImageData(0, 0, this.canvas.width, this.canvas.height);
+	}
+
+	/**
+	 * ImageDataをキャンバスに描画します。
+	 * @param {ImageData} imagedata - 描画する画像データ
+	 */
+	putImageData(imagedata) {
+		this.getContext().putImageData(imagedata, 0, 0);
+	}
+
+	/**
+	 * 内部的な画像描画関数（位置やサイズ調整）
+	 * @param {CanvasImageSource|ImageData} image
+	 * @param {boolean} isresizecanvas
+	 * @param {number} drawsize
+	 * @private
+	 */
+	_putImage(image, isresizecanvas, drawsize) {
+		const pixelsize = this.canvas;
+		let dx = 0,
+			dy = 0;
+		let width = pixelsize.width;
+		let height = pixelsize.height;
+		let isresize = true;
+
+		// @ts-ignore
+		if (image.width === undefined || image.height === undefined) {
+			return;
+		}
+
+		/**
+		 * @type {number}
+		 */
+		// @ts-ignore
+		const image_width = image.width;
+
+		/**
+		 * @type {number}
+		 */
+		// @ts-ignore
+		const image_height = image.height;
+
+		if (SCanvas.drawtype.ORIGINAL === drawsize) {
+			width = image_width;
+			height = image_height;
+		} else if (SCanvas.drawtype.STRETCH === drawsize) {
+			width = pixelsize.width;
+			height = pixelsize.height;
+			isresize = false;
+		} else if (SCanvas.drawtype.LETTER_BOX === drawsize) {
+			width = pixelsize.width;
+			height = pixelsize.height;
+			isresize = false;
+		} else {
+			width = image_width;
+			height = image_height;
+			if (SCanvas.drawtype.ASPECT_RATIO === drawsize) {
+				if (width > pixelsize.width) {
+					width = pixelsize.width;
+					height = Math.floor(height * (width / image_width));
+				}
+				if (height > pixelsize.height) {
+					width = Math.floor(width * (pixelsize.height / height));
+					height = pixelsize.height;
+				}
+			}
+			if (SCanvas.drawtype.LETTER_BOX === drawsize) {
+				width = pixelsize.width;
+				height = Math.floor(height * (width / image_width));
+				if (height > pixelsize.height) {
+					width = Math.floor(width * (pixelsize.height / height));
+					height = pixelsize.height;
+				}
+				dx = Math.floor((pixelsize.width - width) / 2);
+				dy = Math.floor((pixelsize.height - height) / 2);
+				isresizecanvas = false;
+			}
+		}
+		if (isresizecanvas) {
+			this.setUnit(SBase.UNIT_TYPE.PX);
+			this.setSize(width, height);
+			this.setPixelSize(width, height);
+		}
+		this.clear();
+
+		if (image instanceof ImageData) {
+			this.context.putImageData(image, 0, 0, dx, dy, width, height);
+		} else {
+			this.context.drawImage(image, 0, 0, image_width, image_height, dx, dy, width, height);
+		}
+	}
+
+	/**
+	 * 多様な画像ソースを受け取りキャンバスに描画します。
+	 * @param {ImageData|string|SCanvas|HTMLCanvasElement|HTMLImageElement|Blob|File} data
+	 * @param {boolean} [isresizecanvas=false] - キャンバスサイズを変更するかどうか
+	 * @param {number} [drawsize=SCanvas.drawtype.LETTER_BOX] - 描画サイズモード
+	 * @param {Function} [drawcallback] - 描画完了時のコールバック
+	 * @throws {string} 不正なデータ型が渡された場合
+	 */
+	putImage(data, isresizecanvas, drawsize, drawcallback) {
+		if (!drawcallback) {
+			drawcallback = null;
+		}
+		if (drawsize === undefined) {
+			drawsize = SCanvas.drawtype.LETTER_BOX;
+		}
+		if (isresizecanvas === undefined) {
+			isresizecanvas = false;
+		}
+		if (data instanceof Image || data instanceof ImageData) {
+			// Image -> canvas, ImageData -> canvas
+			this._putImage(data, isresizecanvas, drawsize);
+			if (typeof drawcallback === "function") {
+				drawcallback();
+			}
+		} else if (typeof data === "string") {
+			const _this = this;
+			const image = new Image();
+			// URL(string) -> Image
+			image.onload = function () {
+				_this.putImage(image, isresizecanvas, drawsize, drawcallback);
+			};
+			image.src = data;
+		} else if (data instanceof SCanvas) {
+			// SCanvas -> canvas
+			this.putImage(data.canvas, isresizecanvas, drawsize, drawcallback);
+		} else if (data instanceof HTMLCanvasElement &amp;&amp; data.tagName === "CANVAS") {
+			// canvas -> URL(string)
+			this.putImage(data.toDataURL(), isresizecanvas, drawsize, drawcallback);
+		} else if (data instanceof Blob || data instanceof File) {
+			const _this = this;
+			const reader = new FileReader();
+			// Blob, File -> URL(string)
+			reader.onload = function () {
+				// @ts-ignore
+				_this.putImage(reader.result, isresizecanvas, drawsize, drawcallback);
+			};
+			reader.readAsDataURL(data);
+		} else {
+			throw "IllegalArgumentException";
+		}
+	}
+
+	/**
+	 * 現在のキャンバスをデータURLとして取得します。
+	 * @param {string} [mime_type="image/png"] - 出力する画像のMIMEタイプ
+	 * @returns {string} データURL
+	 */
+	toDataURL(mime_type) {
+		if (!mime_type) {
+			mime_type = "image/png";
+		}
+		return this.canvas.toDataURL(mime_type);
+	}
+}
+
+/**
+ * 描画サイズのモード定数
+ * @enum {number}
+ */
+SCanvas.drawtype = {
+	ORIGINAL: 0,
+	ASPECT_RATIO: 1,
+	STRETCH: 2,
+	LETTER_BOX: 3
+};
+</code></pre>
+        </article>
+    </section>
+
+
+
+
+    
+    
+</div>
+
+<br class="clear">
+
+<footer>
+    Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 4.0.4</a> using the <a href="https://github.com/clenemt/docdash">docdash</a> theme.
+</footer>
+
+<script>prettyPrint();</script>
+<script src="scripts/polyfill.js"></script>
+<script src="scripts/linenumber.js"></script>
+
+
+<script src="scripts/collapse.js" defer></script>
+
+
+</body>
+</html>

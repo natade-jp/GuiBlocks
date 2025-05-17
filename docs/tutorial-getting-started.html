@@ -1,0 +1,287 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    
+    <meta charset="utf-8">
+    <title>Tutorial: getting-started - GuiBlocks</title>
+    
+    
+    <script src="scripts/prettify/prettify.js"></script>
+    <script src="scripts/prettify/lang-css.js"></script>
+    <!--[if lt IE 9]>
+      <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
+    <link type="text/css" rel="stylesheet" href="styles/prettify.css">
+    <link type="text/css" rel="stylesheet" href="styles/jsdoc.css">
+    <script src="scripts/nav.js" defer></script>
+    
+    <script src="scripts/commonNav.js" defer></script>
+    
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+</head>
+<body>
+
+<input type="checkbox" id="nav-trigger" class="nav-trigger" />
+<label for="nav-trigger" class="navicon-button x">
+  <div class="navicon"></div>
+</label>
+
+<label for="nav-trigger" class="overlay"></label>
+
+<nav >
+    
+    
+</nav>
+
+<div id="main">
+    
+    <h1 class="page-title">Tutorial: getting-started</h1>
+    
+
+    <section>
+
+<header>
+    
+
+    <h2>getting-started</h2>
+</header>
+
+<article>
+    <h2>チュートリアル</h2>
+<p><code>GuiBlocks</code> を使ってGUIを作成する方法を実際に動作するデモを使用して説明します。</p>
+<h3>実動作</h3>
+<p>PC画面とスマホ画面の実動作を確認できます。
+クリックした結果は <code>console.log</code> で出力しています。検証で表示しながら、GUIを操作してみてください。</p>
+<h4>PC画面</h4>
+<iframe src="../docs/demo/" width="100%" height="1000" style="border: 1px solid #ccc; border-radius: 8px;"></iframe>
+<h4>スマホ画面</h4>
+<iframe src="../docs/demo/" width="390" height="844" style="border: 1px solid #ccc; border-radius: 8px;"></iframe>
+<h3>解説</h3>
+<p>ブロックを積み立てるようにGUIを構築しています。ソースコードをご覧ください。</p>
+<ul>
+<li><code>index.html</code></li>
+</ul>
+<pre class="prettyprint source lang-html"><code>&lt;!doctype html>
+&lt;html>
+	&lt;head>
+		&lt;title>GuiBlocks demos&lt;/title>
+		&lt;meta charset=&quot;utf-8&quot; />
+		&lt;meta name=&quot;viewport&quot; content=&quot;width=device-width,initial-scale=1.0,user-scalable=no&quot; />
+		&lt;script type=&quot;module&quot; src=&quot;./main.mjs&quot; charset=&quot;utf-8&quot;>&lt;/script>
+		&lt;link rel=&quot;stylesheet&quot; type=&quot;text/css&quot; href=&quot;../../build/esm/main.css&quot; />
+	&lt;/head>
+	&lt;body>
+		&lt;div id=&quot;component_test&quot;>&lt;/div>
+	&lt;/body>
+&lt;/html>
+</code></pre>
+<ul>
+<li><code>main.mjs</code></li>
+</ul>
+<pre class="prettyprint source lang-js"><code>import Blocks from &quot;../../build/esm/index.min.js&quot;;
+
+// メイン関数
+const main = function () {
+	// ---- 基本説明 ----
+	console.log(&quot;GuiBlocks のサンプル&quot;);
+	console.log(&quot;HTML での部品用のクラスです。&quot;);
+
+	// ---- パネルの作成 ----
+	// 「Panel」は他の部品を入れるためのコンテナです
+	// &quot;component_test&quot; というIDを持つHTML要素の中にパネルを配置します
+	const panel = new Blocks.SPanel();
+	panel.putMe(&quot;component_test&quot;, Blocks.PUT_TYPE.IN);
+
+	// ---- ラベルの配置 ----
+	// 「Label」は単純なテキスト表示用部品です
+	const label1 = new Blocks.SLabel(&quot;PUT_TYPE.IN&quot;);
+	panel.put(label1, Blocks.PUT_TYPE.IN); // パネルの中に配置
+
+	// 2つめのラベル。1つめラベルの右側に配置
+	const label2 = new Blocks.SLabel(&quot;PUT_TYPE.RIGHT&quot;);
+	label1.put(label2, Blocks.PUT_TYPE.RIGHT);
+
+	// 3つめのラベル。2つめラベルの下に配置
+	const label3 = new Blocks.SLabel(&quot;PUT_TYPE.NEWLINE&quot;);
+	label2.put(label3, Blocks.PUT_TYPE.NEWLINE);
+
+	// ---- サイズ設定 ----
+	// ラベルのサイズや単位（em/pxなど）を指定できます
+	label3.setUnit(Blocks.UNIT_TYPE.EM);
+	label3.setSize(30, 2); // 横30em, 縦2em
+	console.log(&quot;width &quot; + label3.getWidth() + label3.getUnit());
+	console.log(&quot;height &quot; + label3.getHeight() + label3.getUnit());
+
+	// ---- テキスト変更 ----
+	label1.setText(&quot;【&quot; + label1.getText() + &quot;】&quot;); // ラベルのテキストを編集
+
+	// ---- タイトル付きパネル ----
+	const panel2 = new Blocks.SPanel(&quot;タイトル付きパネル&quot;);
+	panel.put(panel2, Blocks.PUT_TYPE.NEWLINE);
+	panel2.put(new Blocks.SLabel(&quot;テスト&quot;), Blocks.PUT_TYPE.IN);
+
+	// ---- スライドパネル ----
+	// ヘッダをクリックすると展開・折りたたみできるパネル
+	const slidepanel = new Blocks.SSlidePanel(&quot;スライドパネル&quot;);
+	panel2.put(slidepanel, Blocks.PUT_TYPE.NEWLINE);
+
+	// ---- ボタン ----
+	// 「10回押す」ボタン。クリックでカウントダウン
+	const button1 = new Blocks.SButton(&quot;10回押す&quot;);
+	slidepanel.put(button1, Blocks.PUT_TYPE.IN);
+
+	let pushed1 = 10; // カウント用
+	button1.addListener(function () {
+		if (pushed1 > 0) {
+			pushed1--;
+		}
+		progressbar.setValue(pushed1);
+		if (pushed1 === 0) {
+			// 残り0回で他の部品をまとめて非表示に
+			fileloadbtn.setVisible(false);
+			filesavebtn.setVisible(false);
+			combobox.setVisible(false);
+			checkbox.setVisible(false);
+			label1.setVisible(false);
+			label2.setVisible(false);
+			label3.setVisible(false);
+			canvas.setVisible(false);
+			slider.setVisible(false);
+			imagepanel.setVisible(false);
+		}
+		button1.setText(&quot;残り &quot; + pushed1);
+	});
+
+	// ---- プログレスバー ----
+	// 進捗表示用のバー
+	const progressbar = new Blocks.SProgressBar(10, 0);
+	button1.put(progressbar, Blocks.PUT_TYPE.RIGHT);
+
+	// ---- ボタンで有効/無効の切り替え ----
+	const button2 = new Blocks.SButton(&quot;無効化&quot;);
+	progressbar.put(button2, Blocks.PUT_TYPE.NEWLINE);
+	let pushed2 = 0;
+	button2.addListener(function () {
+		pushed2++;
+		button2.setText(pushed2 % 2 === 1 ? &quot;有効化&quot; : &quot;無効化&quot;);
+
+		// 部品の有効/無効切り替え（isEnabled()で状態取得・toggle可）
+		progressbar.setIndeterminate(!progressbar.isIndeterminate());
+		button1.setEnabled(!button1.isEnabled());
+		fileloadbtn.setEnabled(!fileloadbtn.isEnabled());
+		filesavebtn.setEnabled(!filesavebtn.isEnabled());
+		combobox.setEnabled(!combobox.isEnabled());
+		checkbox.setEnabled(!checkbox.isEnabled());
+		label1.setEnabled(!label1.isEnabled());
+		label2.setEnabled(!label2.isEnabled());
+		label3.setEnabled(!label3.isEnabled());
+		canvas.setEnabled(!canvas.isEnabled());
+		slider.setEnabled(!slider.isEnabled());
+		imagepanel.setEnabled(!imagepanel.isEnabled());
+	});
+
+	// ---- グループボックス ----
+	// 枠付きの部品グループ
+	const groupbox = new Blocks.SGroupBox(&quot;グループボックス&quot;);
+	slidepanel.put(groupbox, Blocks.PUT_TYPE.NEWLINE);
+
+	// ---- ファイル読込ボタン ----
+	// accept属性で「画像のみ」選択できるようにする
+	const fileloadbtn = new Blocks.SFileLoadButton(&quot;load&quot;);
+	fileloadbtn.setFileAccept(Blocks.FILE_ACCEPT.IMAGE);
+	groupbox.put(fileloadbtn, Blocks.PUT_TYPE.IN);
+	fileloadbtn.addListener(function (file) {
+		for (let i = 0; i &lt; file.length; i++) {
+			console.log(file[i].name + &quot; &quot; + file[i].size + &quot;byte&quot;);
+		}
+	});
+
+	// ---- ファイル保存ボタン ----
+	const filesavebtn = new Blocks.SFileSaveButton(&quot;save&quot;);
+	fileloadbtn.put(filesavebtn, Blocks.PUT_TYPE.RIGHT);
+
+	// ---- キャンバス ----
+	// お絵かき、画像描画、ダウンロード用途にも
+	const canvas = new Blocks.SCanvas();
+	canvas.setPixelSize(200, 20);
+	canvas.setUnit(Blocks.UNIT_TYPE.PX);
+	canvas.setSize(200, 20);
+	filesavebtn.put(canvas, Blocks.PUT_TYPE.NEWLINE);
+
+	// 2D描画
+	canvas.getContext().fillText(&quot;canvas&quot;, 0, 20);
+	canvas.getContext().strokeText(&quot;canvas&quot;, 100, 20);
+
+	// 現在のキャンバス画像を保存ボタンのURLにセット
+	filesavebtn.setURL(canvas.toDataURL());
+
+	// ---- コンボボックス（ドロップダウン） ----
+	const combobox = new Blocks.SComboBox([&quot;test1&quot;, &quot;test2&quot;]);
+	canvas.put(combobox, Blocks.PUT_TYPE.NEWLINE);
+	combobox.setWidth(12); // 横幅
+	// getText()で全項目取得
+	const selectitem = combobox.getText();
+	console.log(selectitem[0]);
+	console.log(selectitem[1]);
+	// 2番目を選択状態に
+	combobox.setSelectedItem(&quot;test2&quot;);
+	combobox.addListener(function () {
+		console.log(&quot;ComboBox &quot; + combobox.getSelectedItem());
+	});
+
+	// ---- チェックボックス ----
+	const checkbox = new Blocks.SCheckBox(&quot;チェックボックス&quot;);
+	combobox.put(checkbox, Blocks.PUT_TYPE.NEWLINE);
+	checkbox.addListener(function () {
+		console.log(&quot;CheckBox &quot; + checkbox.isChecked());
+	});
+
+	// ---- スライダー ----
+	const slider = new Blocks.SSlider(0, 100);
+	checkbox.put(slider, Blocks.PUT_TYPE.NEWLINE);
+	slider.setMinorTickSpacing(10); // 補助目盛
+	slider.setMajorTickSpacing(50); // 主要目盛
+	slider.addListener(function () {
+		console.log(&quot;&quot; + slider.getValue());
+	});
+
+	// ---- 画像パネル ----
+	const imagepanel = new Blocks.SImagePanel();
+	slider.put(imagepanel, Blocks.PUT_TYPE.NEWLINE);
+	imagepanel.putImage(&quot;./image_test1.jpg&quot;);
+
+	// ---- カラーピッカー ----
+	const picker = new Blocks.SColorPicker();
+	imagepanel.put(picker, Blocks.PUT_TYPE.NEWLINE);
+	picker.addListener(function () {
+		console.log(&quot;ColorPicker &quot; + picker.getColor());
+	});
+};
+
+// メイン関数を実行
+main();
+</code></pre>
+</article>
+
+</section>
+
+    
+    
+</div>
+
+<br class="clear">
+
+<footer>
+    Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 4.0.4</a> using the <a href="https://github.com/clenemt/docdash">docdash</a> theme.
+</footer>
+
+<script>prettyPrint();</script>
+<script src="scripts/polyfill.js"></script>
+<script src="scripts/linenumber.js"></script>
+
+
+<script src="scripts/collapse.js" defer></script>
+
+
+</body>
+</html>

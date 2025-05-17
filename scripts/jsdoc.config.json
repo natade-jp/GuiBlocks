@@ -27,10 +27,16 @@
 		"recurse": true
 	},
 	"docdash": {
-		"static": true,
+		"menu": {
+			"Github repo": {
+				"href": "https://github.com/natade-jp/GuiBlocks",
+				"class": "menu-item"
+			}
+		},
+		"static": false,
 		"sort": true,
-		"sectionOrder": ["Classes", "Tutorials"],
-		"search": true,
+		"sectionOrder": ["Tutorials", "Classes"],
+		"search": false,
 		"commonNav": true,
 		"collapse": true,
 		"wrap": false,

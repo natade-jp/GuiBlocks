@@ -1,22 +1,43 @@
-# はじめての使い方
+## チュートリアル
 
-このチュートリアルでは、`GuiBlocks` を使って簡単な文字列操作を行う例を紹介します。
+`GuiBlocks` を使ってGUIを作成する方法を実際に動作するデモを使用して説明します。
 
----
+### 実動作
 
-## 📦 使用例
+PC画面とスマホ画面の実動作を確認できます。
+クリックした結果は `console.log` で出力しています。検証で表示しながら、GUIを操作してみてください。
 
-以下は、ライブラリの実際の動作を確認できるデモです。
+#### PC画面
 
 <iframe src="../docs/demo/" width="100%" height="1000" style="border: 1px solid #ccc; border-radius: 8px;"></iframe>
 
----
+#### スマホ画面
 
-## 📄 解説
+<iframe src="../docs/demo/" width="390" height="844" style="border: 1px solid #ccc; border-radius: 8px;"></iframe>
 
-このデモでは、ライブラリを使って、ブロックを積み立てるようにGUIを構築しています。
+### 解説
 
-詳しくはソースコードをご覧ください。
+ブロックを積み立てるようにGUIを構築しています。ソースコードをご覧ください。
+
+- `index.html`
+
+~~~ html
+<!doctype html>
+<html>
+	<head>
+		<title>GuiBlocks demos</title>
+		<meta charset="utf-8" />
+		<meta name="viewport" content="width=device-width,initial-scale=1.0,user-scalable=no" />
+		<script type="module" src="./main.mjs" charset="utf-8"></script>
+		<link rel="stylesheet" type="text/css" href="../../build/esm/main.css" />
+	</head>
+	<body>
+		<div id="component_test"></div>
+	</body>
+</html>
+~~~
+
+- `main.mjs`
 
 ~~~ js
 import Blocks from "../../build/esm/index.min.js";
