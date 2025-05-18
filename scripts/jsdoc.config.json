@@ -29,7 +29,7 @@
 	"docdash": {
 		"menu": {
 			"Github repo": {
-				"href": "https://github.com/natade-jp/GuiBlocks",
+				"href": "https://github.com/natade-jp/js-guiblocks",
 				"class": "menu-item"
 			}
 		},
