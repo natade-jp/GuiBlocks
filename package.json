@@ -1,10 +1,9 @@
 {
 	"name": "guiblocks",
-	"version": "0.0.1",
+	"version": "0.0.2",
 	"description": "A lightweight JavaScript UI component library for building web interfaces with modular blocks.",
 	"keywords": [
 		"gui",
-		"ui",
 		"components",
 		"javascript",
 		"web",
@@ -12,7 +11,6 @@
 		"modular",
 		"framework",
 		"guiblocks",
-		"interface",
 		"library"
 	],
 	"author": "natade-jp <natade3@gmail.com> (https://github.com/natade-jp)",
