@@ -1,4 +1,4 @@
-import Blocks from "./esm/index.min.js";
+import Blocks from "./libs/GuiBlocks.min.js";
 
 // メイン関数
 const main = function () {

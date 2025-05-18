@@ -25,6 +25,6 @@ batch();
 
 NTFile.exec('npx jsdoc -R "./README.md" -c "./scripts/jsdoc.config.json"');
 
-NTFile.copy("./build/esm/index.min.js", "./docs/demo/esm/index.min.js");
-NTFile.copy("./build/esm/index.min.d.ts", "./docs/demo/esm/index.min.d.ts");
-NTFile.copy("./build/esm/main.css", "./docs/demo/esm/main.css");
+NTFile.copy("./build/esm/index.min.js", "./docs/demo/esm/GuiBlocks.min.js");
+NTFile.copy("./build/esm/index.min.d.ts", "./docs/demo/esm/GuiBlocks.min.d.ts");
+NTFile.copy("./build/esm/main.css", "./docs/demo/esm/GuiBlocks.css");
