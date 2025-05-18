@@ -185,6 +185,7 @@ declare namespace SCanvas {
         let ASPECT_RATIO: number;
         let STRETCH: number;
         let LETTER_BOX: number;
+        let FILL_ASPECT_RATIO: number;
     }
     /**
      * 描画サイズのモード定数

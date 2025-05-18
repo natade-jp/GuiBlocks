@@ -147,7 +147,7 @@ export default class SCanvas extends SBase {
 			width = pixelsize.width;
 			height = pixelsize.height;
 			isresize = false;
-		} else if (SCanvas.drawtype.LETTER_BOX === drawsize) {
+		} else if (SCanvas.drawtype.FILL_ASPECT_RATIO === drawsize) {
 			width = pixelsize.width;
 			height = pixelsize.height;
 			isresize = false;
@@ -263,5 +263,6 @@ SCanvas.drawtype = {
 	ORIGINAL: 0,
 	ASPECT_RATIO: 1,
 	STRETCH: 2,
-	LETTER_BOX: 3
+	LETTER_BOX: 3,
+	FILL_ASPECT_RATIO: 4
 };
