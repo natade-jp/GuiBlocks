@@ -906,6 +906,7 @@
 
 		/**
 		 * キャンバスをクリアします。
+		 * @returns {void}
 		 */
 		clear() {
 			this.getContext().clearRect(0, 0, this.canvas.width, this.canvas.height);
@@ -3159,6 +3160,7 @@
 
 		/**
 		 * グループ内のすべての子要素を削除します。
+		 * @returns {void}
 		 */
 		clear() {
 			SBase._removeChildNodes(this.body);
@@ -3199,6 +3201,7 @@
 		/**
 		 * パネル内の全ての要素を削除します。
 		 * 画像をクリアする用途で使用します。
+		 * @returns {void}
 		 */
 		clear() {
 			// 未作成
@@ -3666,6 +3669,7 @@
 
 		/**
 		 * コンテンツ領域をクリアします。
+		 * @returns {void}
 		 */
 		clear() {
 			SBase._removeChildNodes(this.body);

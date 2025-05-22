@@ -143,6 +143,7 @@ declare class SCanvas extends SBase {
     context: CanvasRenderingContext2D;
     /**
      * キャンバスをクリアします。
+     * @returns {void}
      */
     clear(): void;
     /**
@@ -985,6 +986,7 @@ declare class SGroupBox extends SBase {
     getContainerElement(): HTMLDivElement;
     /**
      * グループ内のすべての子要素を削除します。
+     * @returns {void}
      */
     clear(): void;
 }
@@ -1008,6 +1010,7 @@ declare class SImagePanel extends SBase {
     /**
      * パネル内の全ての要素を削除します。
      * 画像をクリアする用途で使用します。
+     * @returns {void}
      */
     clear(): void;
     /**
@@ -1240,6 +1243,7 @@ declare class SSlidePanel extends SBase {
     getContainerElement(): HTMLDivElement;
     /**
      * コンテンツ領域をクリアします。
+     * @returns {void}
      */
     clear(): void;
 }

@@ -1,6 +1,6 @@
 {
 	"name": "guiblocks",
-	"version": "0.0.3",
+	"version": "0.0.4",
 	"description": "A lightweight JavaScript UI component library for building web interfaces with modular blocks.",
 	"keywords": [
 		"gui",
@@ -45,7 +45,7 @@
 	"bugs": {
 		"url": "https://github.com/natade-jp/js-guiblocks/issues"
 	},
-	"homepage": "(https://natade-jp.github.io/js-guiblocks/",
+	"homepage": "https://natade-jp.github.io/js-guiblocks/",
 	"devDependencies": {
 		"@rollup/plugin-commonjs": "^28.0.3",
 		"@rollup/plugin-node-resolve": "^16.0.1",
