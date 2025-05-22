@@ -1,10 +1,10 @@
 # GuiBlocks
 
-![MIT License](https://img.shields.io/badge/license-MIT-blue.svg?style=flat)
+[![npm version](https://badge.fury.io/js/guiblocks.svg)](https://badge.fury.io/js/guiblocks)
+[![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](https://opensource.org/licenses/MIT)
 
 **GuiBlocks** は、JavaScript で動的に GUI（グラフィカル・ユーザー・インターフェース）を構築するための軽量ライブラリです。HTML を直接記述することなく、JavaScript のコードで Web アプリケーションの UI を構成できます。
-
-このライブラリは **Java の Swing に影響を受けた設計思想** を採用しており、オブジェクト指向でコンポーネントを組み合わせて UI を構築できるようになっています。
+このライブラリは **Java の Swing** に影響を受けて設計しており、オブジェクト指向でコンポーネントを組み合わせて UI を構築できるようになっています。
 
 詳しい説明は、[Github Pages](https://natade-jp.github.io/js-guiblocks/)で解説しています。
 
@@ -23,27 +23,27 @@
 * `esm/` – ES Modules（モダンブラウザ向け）
 * `umd/` – UMD（HTMLスクリプトタグ向け）
 
-いずれかの中にある `index.js` または `index.min.js` を読み込んでください。
+いずれかの中にある `GuiBlocks.js` または `GuiBlocks.min.js` を読み込んでください。
 
 ### ステップ2：CSSの適用
 
 
-GUI の外観を整えるために、`main.css` を HTML に読み込みます。
+GUI の外観を整えるために、`GuiBlocks.css` を HTML に読み込みます。
 
 ```html
-<link rel="stylesheet" href="./build/umd/main.css">
+<link rel="stylesheet" href="./build/umd/GuiBlocks.css">
 ```
 
 ### ステップ3：ライブラリの読み込み
 
 ```html
-<script src="./build/umd/index.min.js"></script>
+<script src="./build/umd/GuiBlocks.min.js"></script>
 ```
 
-またはモジュール形式で：
+またはモジュール形式で
 
 ```javascript
-import Blocks from "./build/esm/index.js";
+import Blocks from "./build/esm/GuiBlocks.js";
 ```
 
 ---
@@ -78,7 +78,3 @@ button.addListener(() => {
 | `SCanvas`, `SCanvasGL`               | 2D描画およびWebGL描画 |
 | `SImagePanel`                       | 画像表示           |
 | `SColorPicker`                      | 色の選択           |
-
-## ライセンス
-
-本ライブラリは [MITライセンス](LICENSE) のもとで公開されています。商用利用、改変、再配布すべて可能です。

@@ -61,9 +61,10 @@
 
     <section class="readme usertext">
         <article><h1>GuiBlocks</h1>
-<p><img src="https://img.shields.io/badge/license-MIT-blue.svg?style=flat" alt="MIT License"></p>
-<p><strong>GuiBlocks</strong> は、JavaScript で動的に GUI（グラフィカル・ユーザー・インターフェース）を構築するための軽量ライブラリです。HTML を直接記述することなく、JavaScript のコードで Web アプリケーションの UI を構成できます。</p>
-<p>このライブラリは <strong>Java の Swing に影響を受けた設計思想</strong> を採用しており、オブジェクト指向でコンポーネントを組み合わせて UI を構築できるようになっています。</p>
+<p><a href="https://badge.fury.io/js/guiblocks"><img src="https://badge.fury.io/js/guiblocks.svg" alt="npm version"></a>
+<a href="https://opensource.org/licenses/MIT"><img src="https://img.shields.io/badge/License-MIT-blue.svg" alt="License: MIT"></a></p>
+<p><strong>GuiBlocks</strong> は、JavaScript で動的に GUI（グラフィカル・ユーザー・インターフェース）を構築するための軽量ライブラリです。HTML を直接記述することなく、JavaScript のコードで Web アプリケーションの UI を構成できます。
+このライブラリは <strong>Java の Swing</strong> に影響を受けて設計しており、オブジェクト指向でコンポーネントを組み合わせて UI を構築できるようになっています。</p>
 <p>詳しい説明は、<a href="https://natade-jp.github.io/js-guiblocks/">Github Pages</a>で解説しています。</p>
 <h2>特長</h2>
 <ul>
@@ -79,16 +80,16 @@
 <li><code>esm/</code> – ES Modules（モダンブラウザ向け）</li>
 <li><code>umd/</code> – UMD（HTMLスクリプトタグ向け）</li>
 </ul>
-<p>いずれかの中にある <code>index.js</code> または <code>index.min.js</code> を読み込んでください。</p>
+<p>いずれかの中にある <code>GuiBlocks.js</code> または <code>GuiBlocks.min.js</code> を読み込んでください。</p>
 <h3>ステップ2：CSSの適用</h3>
-<p>GUI の外観を整えるために、<code>main.css</code> を HTML に読み込みます。</p>
-<pre class="prettyprint source lang-html"><code>&lt;link rel=&quot;stylesheet&quot; href=&quot;./build/umd/main.css&quot;>
+<p>GUI の外観を整えるために、<code>GuiBlocks.css</code> を HTML に読み込みます。</p>
+<pre class="prettyprint source lang-html"><code>&lt;link rel=&quot;stylesheet&quot; href=&quot;./build/umd/GuiBlocks.css&quot;>
 </code></pre>
 <h3>ステップ3：ライブラリの読み込み</h3>
-<pre class="prettyprint source lang-html"><code>&lt;script src=&quot;./build/umd/index.min.js&quot;>&lt;/script>
+<pre class="prettyprint source lang-html"><code>&lt;script src=&quot;./build/umd/GuiBlocks.min.js&quot;>&lt;/script>
 </code></pre>
-<p>またはモジュール形式で：</p>
-<pre class="prettyprint source lang-javascript"><code>import Blocks from &quot;./build/esm/index.js&quot;;
+<p>またはモジュール形式で</p>
+<pre class="prettyprint source lang-javascript"><code>import Blocks from &quot;./build/esm/GuiBlocks.js&quot;;
 </code></pre>
 <hr>
 <h2>使用例</h2>
@@ -151,9 +152,7 @@ button.addListener(() => {
 <td>色の選択</td>
 </tr>
 </tbody>
-</table>
-<h2>ライセンス</h2>
-<p>本ライブラリは <a href="LICENSE">MITライセンス</a> のもとで公開されています。商用利用、改変、再配布すべて可能です。</p></article>
+</table></article>
     </section>
 
 

@@ -17,5 +17,5 @@
 		"sourceMap": true, // ソースマップを出力する
 		"outDir": "../build/type/" // 出力先ディレクトリ
 	},
-	"include": ["../build/esm/index.js"] // コンパイル対象のファイル
+	"include": ["../build/esm/GuiBlocks.js"] // コンパイル対象のファイル
 }

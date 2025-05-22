@@ -19,15 +19,15 @@
 		"url": "git+https://github.com/natade-jp/js-guiblocks.git"
 	},
 	"license": "MIT",
-	"source": "./src/index.js",
-	"main": "./build/esm/index.js",
-	"types": "./build/type/index.d.ts",
+	"source": "./src/GuiBlocks.js",
+	"main": "./build/esm/GuiBlocks.js",
+	"types": "./build/type/GuiBlocks.d.ts",
 	"exports": {
 		".": {
-			"browser": "./build/umd/index.js",
-			"umd": "./build/umd/index.js",
-			"import": "./build/esm/index.js",
-			"require": "./build/cjs/index.js"
+			"browser": "./build/umd/GuiBlocks.js",
+			"umd": "./build/umd/GuiBlocks.js",
+			"import": "./build/esm/GuiBlocks.js",
+			"require": "./build/cjs/GuiBlocks.js"
 		}
 	},
 	"type": "module",

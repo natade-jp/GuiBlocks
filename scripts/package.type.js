@@ -1,6 +1,6 @@
 ﻿import NTFile from "ntfile";
 
 NTFile.exec("npx tsc -p ./scripts/tsconfig.json");
-NTFile.copy("./build/type/index.d.ts", "./build/cjs/index.min.d.ts");
-NTFile.copy("./build/type/index.d.ts", "./build/umd/index.min.d.ts");
-NTFile.copy("./build/type/index.d.ts", "./build/esm/index.min.d.ts");
+NTFile.copy("./build/type/GuiBlocks.d.ts", "./build/cjs/GuiBlocks.min.d.ts");
+NTFile.copy("./build/type/GuiBlocks.d.ts", "./build/umd/GuiBlocks.min.d.ts");
+NTFile.copy("./build/type/GuiBlocks.d.ts", "./build/esm/GuiBlocks.min.d.ts");

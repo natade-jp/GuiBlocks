@@ -33,14 +33,14 @@ const createData = function (moduleName, input_name, output_name, format, isUgli
 };
 
 const name = "GuiBlocks";
-const input = "./src/index.js";
+const input = "./src/GuiBlocks.js";
 const data = [];
 
-data.push(createData(name, input, "./build/umd/index.js", "umd", false));
-data.push(createData(name, input, "./build/umd/index.min.js", "umd", true));
-data.push(createData(name, input, "./build/cjs/index.js", "cjs", false));
-data.push(createData(name, input, "./build/cjs/index.min.js", "cjs", true));
-data.push(createData(name, input, "./build/esm/index.js", "esm", false));
-data.push(createData(name, input, "./build/esm/index.min.js", "esm", true));
+data.push(createData(name, input, "./build/umd/GuiBlocks.js", "umd", false));
+data.push(createData(name, input, "./build/umd/GuiBlocks.min.js", "umd", true));
+data.push(createData(name, input, "./build/cjs/GuiBlocks.js", "cjs", false));
+data.push(createData(name, input, "./build/cjs/GuiBlocks.min.js", "cjs", true));
+data.push(createData(name, input, "./build/esm/GuiBlocks.js", "esm", false));
+data.push(createData(name, input, "./build/esm/GuiBlocks.min.js", "esm", true));
 
 export default data;
