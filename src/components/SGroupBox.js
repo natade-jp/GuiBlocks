@@ -61,6 +61,7 @@ export default class SGroupBox extends SBase {
 
 	/**
 	 * グループ内のすべての子要素を削除します。
+	 * @returns {void}
 	 */
 	clear() {
 		SBase._removeChildNodes(this.body);

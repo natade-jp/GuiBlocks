@@ -34,6 +34,7 @@ export default class SImagePanel extends SBase {
 	/**
 	 * パネル内の全ての要素を削除します。
 	 * 画像をクリアする用途で使用します。
+	 * @returns {void}
 	 */
 	clear() {
 		// 未作成

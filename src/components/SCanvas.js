@@ -87,6 +87,7 @@ export default class SCanvas extends SBase {
 
 	/**
 	 * キャンバスをクリアします。
+	 * @returns {void}
 	 */
 	clear() {
 		this.getContext().clearRect(0, 0, this.canvas.width, this.canvas.height);

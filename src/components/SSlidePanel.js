@@ -114,6 +114,7 @@ export default class SSlidePanel extends SBase {
 
 	/**
 	 * コンテンツ領域をクリアします。
+	 * @returns {void}
 	 */
 	clear() {
 		SBase._removeChildNodes(this.body);

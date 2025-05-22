@@ -100,6 +100,7 @@ export default class SCanvasGL extends SBase {
 
 	/**
 	 * キャンバスをクリアします（GLコンテキストのカラー情報を削除）
+	 * @returns {void}
 	 */
 	clear() {
 		this.getContext().clear(this.gl.COLOR_BUFFER_BIT);
