@@ -144,9 +144,9 @@ JavaのSwingアーキテクチャを参考に、オブジェクト指向でUIを
 <hr>
 <h2>典型的な利用例</h2>
 <pre class="prettyprint source lang-javascript"><code>import GuiBlocks from &quot;guiblocks&quot;;
-const panel = new GuiBlocks.SPanel(&quot;デモパネル&quot;);
-const label = new GuiBlocks.SLabel(&quot;こんにちは&quot;);
-const button = new GuiBlocks.SButton(&quot;OK&quot;);
+const panel = new GuiBlocks.Panel(&quot;デモパネル&quot;);
+const label = new GuiBlocks.Label(&quot;こんにちは&quot;);
+const button = new GuiBlocks.Button(&quot;OK&quot;);
 
 panel.put(label, GuiBlocks.PUT_TYPE.IN);
 label.put(button, GuiBlocks.PUT_TYPE.RIGHT);

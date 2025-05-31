@@ -25,6 +25,8 @@ batch();
 
 NTFile.exec('npx jsdoc -R "./README.md" -c "./scripts/jsdoc.config.json"');
 
-NTFile.copy("./build/esm/GuiBlocks.min.js", "./docs/demo/libs/GuiBlocks.min.js");
-NTFile.copy("./build/esm/GuiBlocks.min.d.ts", "./docs/demo/libs/GuiBlocks.min.d.ts");
-NTFile.copy("./build/esm/GuiBlocks.css", "./docs/demo/libs/GuiBlocks.css");
+const files = ["GuiBlocks.min.js", "GuiBlocks.min.d.ts", "GuiBlocks.css"];
+
+files.forEach((file) => {
+	NTFile.copy(`./build/esm/${file}`, `./docs/demo/libs/${file}`);
+});

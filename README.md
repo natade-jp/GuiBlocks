@@ -3,8 +3,8 @@
 [![npm version](https://badge.fury.io/js/guiblocks.svg)](https://badge.fury.io/js/guiblocks)
 [![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](https://opensource.org/licenses/MIT)
 
-**GuiBlocks** は、JavaScript で動的に GUI（グラフィカル・ユーザー・インターフェース）を構築するための軽量ライブラリです。HTML を直接記述することなく、JavaScript のコードで Web アプリケーションの UI を構成できます。
-このライブラリは **Java の Swing** に影響を受けて設計しており、オブジェクト指向でコンポーネントを組み合わせて UI を構築できるようになっています。
+**GuiBlocks** は、JavaScript で動的に GUI を構築するための軽量ライブラリです。HTML を直接記述することなく、JavaScript のコードで Web アプリケーションの UI を構成できます。
+このライブラリは Java の Swing に影響を受けて設計しており、オブジェクト指向でコンポーネントを組み合わせて UI を構築できるようになっています。
 
 詳しい説明は、[Github Pages](https://natade-jp.github.io/js-guiblocks/)で解説しています。
 
@@ -13,7 +13,7 @@
 * 部品（コンポーネント）を組み立ててGUIを構築
 * PC、スマホのようなレスポンシブデザインに対応
 * Canvas、ファイル操作、カラーピッカーなど豊富な部品
-* 独自のレイアウト制御：IN / RIGHT / NEWLINE**
+* 独自のレイアウト制御：IN / RIGHT / NEWLINE
 
 ## 利用方法
 
@@ -23,10 +23,9 @@
 * `esm/` – ES Modules（モダンブラウザ向け）
 * `umd/` – UMD（HTMLスクリプトタグ向け）
 
-いずれかの中にある `GuiBlocks.js` または `GuiBlocks.min.js` を読み込んでください。
+いずれかの中にある `GuiBlocks.js` または `GuiBlocks.min.js` を利用してください。
 
 ### ステップ2：CSSの適用
-
 
 GUI の外観を整えるために、`GuiBlocks.css` を HTML に読み込みます。
 
@@ -46,16 +45,14 @@ GUI の外観を整えるために、`GuiBlocks.css` を HTML に読み込みま
 import Blocks from "./build/esm/GuiBlocks.js";
 ```
 
----
-
 ## 使用例
 
 ```javascript
-const panel = new Blocks.SPanel("デモパネル");
+const panel = new Blocks.Panel("デモパネル");
 panel.putMe("container_id", Blocks.PUT_TYPE.IN);
 
-const label = new Blocks.SLabel("こんにちは");
-const button = new Blocks.SButton("クリック");
+const label = new Blocks.Label("こんにちは");
+const button = new Blocks.Button("クリック");
 
 panel.put(label, Blocks.PUT_TYPE.IN);
 label.put(button, Blocks.PUT_TYPE.RIGHT);
@@ -66,6 +63,8 @@ button.addListener(() => {
 ```
 
 ## 主なコンポーネント一覧
+
+クラス名は `SLabel` ですが `GuiBlocks.Label` のようにアクセスできます。
 
 | コンポーネント名                           | 説明             |
 | ---------------------------------- | -------------- |

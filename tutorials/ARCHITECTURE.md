@@ -101,9 +101,9 @@ JavaのSwingアーキテクチャを参考に、オブジェクト指向でUIを
 
 ```javascript
 import GuiBlocks from "guiblocks";
-const panel = new GuiBlocks.SPanel("デモパネル");
-const label = new GuiBlocks.SLabel("こんにちは");
-const button = new GuiBlocks.SButton("OK");
+const panel = new GuiBlocks.Panel("デモパネル");
+const label = new GuiBlocks.Label("こんにちは");
+const button = new GuiBlocks.Button("OK");
 
 panel.put(label, GuiBlocks.PUT_TYPE.IN);
 label.put(button, GuiBlocks.PUT_TYPE.RIGHT);

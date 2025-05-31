@@ -9,20 +9,20 @@ const main = function () {
 	// ---- パネルの作成 ----
 	// 「Panel」は他の部品を入れるためのコンテナです
 	// "component_test" というIDを持つHTML要素の中にパネルを配置します
-	const panel = new Blocks.SPanel();
+	const panel = new Blocks.Panel();
 	panel.putMe("component_test", Blocks.PUT_TYPE.IN);
 
 	// ---- ラベルの配置 ----
 	// 「Label」は単純なテキスト表示用部品です
-	const label1 = new Blocks.SLabel("PUT_TYPE.IN");
+	const label1 = new Blocks.Label("PUT_TYPE.IN");
 	panel.put(label1, Blocks.PUT_TYPE.IN); // パネルの中に配置
 
 	// 2つめのラベル。1つめラベルの右側に配置
-	const label2 = new Blocks.SLabel("PUT_TYPE.RIGHT");
+	const label2 = new Blocks.Label("PUT_TYPE.RIGHT");
 	label1.put(label2, Blocks.PUT_TYPE.RIGHT);
 
 	// 3つめのラベル。2つめラベルの下に配置
-	const label3 = new Blocks.SLabel("PUT_TYPE.NEWLINE");
+	const label3 = new Blocks.Label("PUT_TYPE.NEWLINE");
 	label2.put(label3, Blocks.PUT_TYPE.NEWLINE);
 
 	// ---- サイズ設定 ----
@@ -36,18 +36,18 @@ const main = function () {
 	label1.setText("【" + label1.getText() + "】"); // ラベルのテキストを編集
 
 	// ---- タイトル付きパネル ----
-	const panel2 = new Blocks.SPanel("タイトル付きパネル");
+	const panel2 = new Blocks.Panel("タイトル付きパネル");
 	panel.put(panel2, Blocks.PUT_TYPE.NEWLINE);
-	panel2.put(new Blocks.SLabel("テスト"), Blocks.PUT_TYPE.IN);
+	panel2.put(new Blocks.Label("テスト"), Blocks.PUT_TYPE.IN);
 
 	// ---- スライドパネル ----
 	// ヘッダをクリックすると展開・折りたたみできるパネル
-	const slidepanel = new Blocks.SSlidePanel("スライドパネル");
+	const slidepanel = new Blocks.SlidePanel("スライドパネル");
 	panel2.put(slidepanel, Blocks.PUT_TYPE.NEWLINE);
 
 	// ---- ボタン ----
 	// 「10回押す」ボタン。クリックでカウントダウン
-	const button1 = new Blocks.SButton("10回押す");
+	const button1 = new Blocks.Button("10回押す");
 	slidepanel.put(button1, Blocks.PUT_TYPE.IN);
 
 	let pushed1 = 10; // カウント用
@@ -74,11 +74,11 @@ const main = function () {
 
 	// ---- プログレスバー ----
 	// 進捗表示用のバー
-	const progressbar = new Blocks.SProgressBar(10, 0);
+	const progressbar = new Blocks.ProgressBar(10, 0);
 	button1.put(progressbar, Blocks.PUT_TYPE.RIGHT);
 
 	// ---- ボタンで有効/無効の切り替え ----
-	const button2 = new Blocks.SButton("無効化");
+	const button2 = new Blocks.Button("無効化");
 	progressbar.put(button2, Blocks.PUT_TYPE.NEWLINE);
 	let pushed2 = 0;
 	button2.addListener(function () {
@@ -102,12 +102,12 @@ const main = function () {
 
 	// ---- グループボックス ----
 	// 枠付きの部品グループ
-	const groupbox = new Blocks.SGroupBox("グループボックス");
+	const groupbox = new Blocks.GroupBox("グループボックス");
 	slidepanel.put(groupbox, Blocks.PUT_TYPE.NEWLINE);
 
 	// ---- ファイル読込ボタン ----
 	// accept属性で「画像のみ」選択できるようにする
-	const fileloadbtn = new Blocks.SFileLoadButton("load");
+	const fileloadbtn = new Blocks.FileLoadButton("load");
 	fileloadbtn.setFileAccept(Blocks.FILE_ACCEPT.IMAGE);
 	groupbox.put(fileloadbtn, Blocks.PUT_TYPE.IN);
 	fileloadbtn.addListener(function (file) {
@@ -117,12 +117,12 @@ const main = function () {
 	});
 
 	// ---- ファイル保存ボタン ----
-	const filesavebtn = new Blocks.SFileSaveButton("save");
+	const filesavebtn = new Blocks.FileSaveButton("save");
 	fileloadbtn.put(filesavebtn, Blocks.PUT_TYPE.RIGHT);
 
 	// ---- キャンバス ----
 	// お絵かき、画像描画、ダウンロード用途にも
-	const canvas = new Blocks.SCanvas();
+	const canvas = new Blocks.Canvas();
 	canvas.setPixelSize(200, 20);
 	canvas.setUnit(Blocks.UNIT_TYPE.PX);
 	canvas.setSize(200, 20);
@@ -136,7 +136,7 @@ const main = function () {
 	filesavebtn.setURL(canvas.toDataURL());
 
 	// ---- コンボボックス（ドロップダウン） ----
-	const combobox = new Blocks.SComboBox(["test1", "test2"]);
+	const combobox = new Blocks.ComboBox(["test1", "test2"]);
 	canvas.put(combobox, Blocks.PUT_TYPE.NEWLINE);
 	combobox.setWidth(12); // 横幅
 	// getText()で全項目取得
@@ -150,14 +150,14 @@ const main = function () {
 	});
 
 	// ---- チェックボックス ----
-	const checkbox = new Blocks.SCheckBox("チェックボックス");
+	const checkbox = new Blocks.CheckBox("チェックボックス");
 	combobox.put(checkbox, Blocks.PUT_TYPE.NEWLINE);
 	checkbox.addListener(function () {
 		console.log("CheckBox " + checkbox.isChecked());
 	});
 
 	// ---- スライダー ----
-	const slider = new Blocks.SSlider(0, 100);
+	const slider = new Blocks.Slider(0, 100);
 	checkbox.put(slider, Blocks.PUT_TYPE.NEWLINE);
 	slider.setMinorTickSpacing(10); // 補助目盛
 	slider.setMajorTickSpacing(50); // 主要目盛
@@ -166,12 +166,12 @@ const main = function () {
 	});
 
 	// ---- 画像パネル ----
-	const imagepanel = new Blocks.SImagePanel();
+	const imagepanel = new Blocks.ImagePanel();
 	slider.put(imagepanel, Blocks.PUT_TYPE.NEWLINE);
 	imagepanel.putImage("./image_test1.jpg");
 
 	// ---- カラーピッカー ----
-	const picker = new Blocks.SColorPicker();
+	const picker = new Blocks.ColorPicker();
 	imagepanel.put(picker, Blocks.PUT_TYPE.NEWLINE);
 	picker.addListener(function () {
 		console.log("ColorPicker " + picker.getColor());
